@@ -1,0 +1,24 @@
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar Flet e criar pyproject
+        run: |
+          pip install flet
+          cat > pyproject.toml << 'EOF'
+          [project]
+          name = "teste-iris"
+          version = "1.0.0"
+          dependencies = ["flet"]
+          EOF
+      - run: flet build apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: build/apk/*.apk
