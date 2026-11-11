@@ -1,5 +1,9 @@
 name: Build APK
-on: [push]
+
+on:
+  push:
+    branches: [main]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -7,24 +11,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - name: Instalar Flet e criar pyproject
-        run: |
-          pip install flet
-          cat > pyproject.toml << 'EOF'
-          [project]
-          name = "fada-iris"
-          version = "1.0.0"
-          dependencies = ["flet"]
-          EOF
-      - run: flet build apk --verbose
+          python-version: "3.12"
+      - name: Install Flet
+        run: pip install flet==0.28.3
+      - name: Build APK
+        run: flet build apk --split-per-abi --verbose
       - uses: actions/upload-artifact@v4
         with:
           name: apk
